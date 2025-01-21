@@ -75,7 +75,7 @@ mvn spring-boot:run
 
 ## Screenshots
 
-[You can add screenshots of your UI here]
+![image](https://github.com/user-attachments/assets/0e949fe3-851d-4639-be21-6f2eece5e791)
 
 ## Contributing
 
