@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${event.id == null ? 'Add New Event' : 'Edit Event'}">Event Form</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-calendar-alt me-2"></i>
+                <span th:text="${event.id == null ? 'Add New Event' : 'Edit Event'}"></span>
+            </h2>
+            <a href="/events" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Events
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{${event.id == null ? '/events/save' : '/events/update'}}" 
+                      th:object="${event}" method="post">
+                    <input type="hidden" th:field="*{id}" />
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Event Name</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <select class="form-select" id="location" th:field="*{location}" required>
+                            <option value="">Select Location</option>
+                            <option th:each="room : ${availableRooms}"
+                                    th:value="${room.name}"
+                                    th:text="${room.name + ' (Capacity: ' + room.capacity + ')'}">Room Name</option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="startDateTime" class="form-label">Start Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="startDateTime" 
+                                   th:field="*{startDateTime}" required
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="endDateTime" class="form-label">End Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="endDateTime" 
+                                   th:field="*{endDateTime}" required
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="capacity" class="form-label">Capacity</label>
+                            <input type="number" class="form-control" id="capacity" th:field="*{capacity}" 
+                                   min="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="organizer" class="form-label">Organizer</label>
+                            <input type="text" class="form-control" id="organizer" th:field="*{organizer}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="contactInfo" class="form-label">Contact Info</label>
+                            <input type="text" class="form-control" id="contactInfo" th:field="*{contactInfo}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3" th:if="${event.id != null}">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" th:field="*{status}">
+                            <option value="UPCOMING">Upcoming</option>
+                            <option value="ONGOING">Ongoing</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="CANCELLED">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/events" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Save Event
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

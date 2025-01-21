@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Fine Report</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-file-invoice-dollar me-2"></i>Fine Report</h2>
+            <div>
+                <button class="btn btn-success" onclick="window.print()">
+                    <i class="fas fa-print me-1"></i>Print Report
+                </button>
+                <a href="/circulations" class="btn btn-secondary ms-2">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Circulations
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/fines/report}" method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Fine Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="PAID">Paid</option>
+                            <option value="WAIVED">Waived</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-1"></i>Apply Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Fines</h5>
+                        <h3 class="mb-0" th:text="${'RM ' + #numbers.formatDecimal(totalFines, 1, 2)}">RM 0.00</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Collected Fines</h5>
+                        <h3 class="mb-0" th:text="${'RM ' + #numbers.formatDecimal(collectedFines, 1, 2)}">RM 0.00</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Fines</h5>
+                        <h3 class="mb-0" th:text="${'RM ' + #numbers.formatDecimal(pendingFines, 1, 2)}">RM 0.00</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Waived Fines</h5>
+                        <h3 class="mb-0" th:text="${'RM ' + #numbers.formatDecimal(waivedFines, 1, 2)}">RM 0.00</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fine Details Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Member</th>
+                                <th>Book</th>
+                                <th>Fine Amount</th>
+                                <th>Status</th>
+                                <th>Issue Date</th>
+                                <th>Payment Date</th>
+                                <th>Payment Method</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="fine : ${fines}">
+                                <td th:text="${fine.circulation.member.name + ' (' + fine.circulation.member.memberId + ')'}"></td>
+                                <td th:text="${fine.circulation.book.title}"></td>
+                                <td th:text="${'RM ' + #numbers.formatDecimal(fine.amount, 1, 2)}"></td>
+                                <td>
+                                    <span th:class="${'badge ' + 
+                                        (fine.status == 'PAID' ? 'bg-success' : 
+                                        (fine.status == 'PENDING' ? 'bg-warning' : 'bg-info'))}"
+                                          th:text="${fine.status}">
+                                    </span>
+                                </td>
+                                <td th:text="${#temporals.format(fine.issuedDate, 'dd MMM yyyy')}"></td>
+                                <td th:text="${fine.paidDate != null ? #temporals.format(fine.paidDate, 'dd MMM yyyy') : '-'}"></td>
+                                <td th:text="${fine.paymentMethod != null ? fine.paymentMethod : '-'}"></td>
+                                <td th:text="${fine.notes != null ? fine.notes : '-'}"></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(fines)}">
+                                <td colspan="8" class="text-center">No fine records found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Print Styles -->
+        <style>
+            @media print {
+                body * {
+                    visibility: visible;
+                }
+                .btn, form, .no-print {
+                    display: none !important;
+                }
+                .card {
+                    border: none !important;
+                    box-shadow: none !important;
+                }
+                .table {
+                    border: 1px solid #dee2e6;
+                }
+                .table th, .table td {
+                    border: 1px solid #dee2e6;
+                }
+            }
+        </style>
+    </div>
+</body>
+</html> 

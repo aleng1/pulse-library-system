@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Borrow Book</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-book me-2"></i>Borrow Book</h2>
+            <a href="/circulations" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Circulations
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/circulations/borrow}" method="post">
+                    <!-- Book Selection -->
+                    <div class="mb-3">
+                        <label for="bookId" class="form-label">Book</label>
+                        <select class="form-select" id="bookId" name="bookId" required>
+                            <option value="">Select a book</option>
+                            <option th:each="book : ${availableBooks}"
+                                    th:value="${book.id}"
+                                    th:text="${book.title + ' (ISBN: ' + book.isbn + ')'}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Member Selection -->
+                    <div class="mb-3">
+                        <label for="memberId" class="form-label">Member</label>
+                        <select class="form-select" id="memberId" name="memberId" required>
+                            <option value="">Select a member</option>
+                            <option th:each="member : ${activeMembers}"
+                                    th:value="${member.id}"
+                                    th:text="${member.name + ' (ID: ' + member.memberId + ')'}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Due Date -->
+                    <div class="mb-3">
+                        <label for="dueDate" class="form-label">Due Date</label>
+                        <input type="datetime-local" class="form-control" id="dueDate" name="dueDate" required
+                               th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes (Optional)</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check me-1"></i>Confirm Borrowing
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

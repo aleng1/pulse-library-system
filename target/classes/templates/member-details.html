@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Member Details</title>
+    <style>
+        .member-card {
+            width: 350px;
+            height: 200px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .member-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+        }
+        .member-card .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .member-card .member-id {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .member-card .member-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .member-card .member-type {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        .member-card .valid-until {
+            font-size: 0.8rem;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+        .member-card .qr-code {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .modal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                margin: 0;
+                padding: 0;
+                min-height: 100%;
+                visibility: visible;
+                background-color: white !important;
+            }
+            .modal-dialog {
+                visibility: visible;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .member-card {
+                visibility: visible;
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                margin: 0;
+                padding: 20px;
+                box-shadow: none;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .member-card * {
+                visibility: visible;
+            }
+            .modal-header, .modal-footer {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Member Details</h2>
+                <div>
+                    <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#cardModal">
+                        <i class="fas fa-id-card me-1"></i> Generate Card
+                    </button>
+                    <a href="/members" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Members
+                    </a>
+                </div>
+            </div>
+
+            <!-- Member Details -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Member ID:</strong> <span th:text="${member.memberId}"></span></p>
+                            <p><strong>Name:</strong> <span th:text="${member.name}"></span></p>
+                            <p><strong>Email:</strong> <span th:text="${member.email}"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Phone:</strong> <span th:text="${member.phoneNumber}"></span></p>
+                            <p><strong>Address:</strong> <span th:text="${member.address}"></span></p>
+                            <p><strong>Membership Type:</strong> <span th:text="${member.membershipType}"></span></p>
+                            <p><strong>Status:</strong> <span th:text="${member.status}"></span></p>
+                            <p><strong>Join Date:</strong> <span th:text="${#temporals.format(member.joinDate, 'dd MMM yyyy')}"></span></p>
+                            <p><strong>Expiry Date:</strong> <span th:text="${#temporals.format(member.expiryDate, 'dd MMM yyyy')}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Card Modal -->
+            <div class="modal fade" id="cardModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Member Card</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div class="member-card mx-auto">
+                                <div class="logo">PULSE LIBRARY</div>
+                                <div class="member-id" th:text="${'ID: ' + member.memberId}">ID: M001</div>
+                                <div class="member-name" th:text="${member.name}">John Doe</div>
+                                <div class="member-type" th:text="${member.membershipType}">REGULAR</div>
+                                <div class="valid-until" th:text="${member.expiryDate != null ? 'Valid until: ' + #temporals.format(member.expiryDate, 'MM/yyyy') : 'Valid until: N/A'}">Valid until: 12/2024</div>
+                                <img class="qr-code" th:src="@{'https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=' + member.memberId}" alt="QR Code"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i> Print Card
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

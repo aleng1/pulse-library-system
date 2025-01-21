@@ -1,0 +1,12 @@
+     HELP.md
+     target/
+     .mvn/
+     mvnw
+     mvnw.cmd
+     .settings/
+     .classpath
+     .project
+     .factorypath
+     *.properties
+     application.properties
+     application.yml

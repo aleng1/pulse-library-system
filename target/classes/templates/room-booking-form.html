@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${booking.id == null ? 'Book Room' : 'Edit Booking'}">Room Booking</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-calendar-plus me-2"></i>
+                <span th:text="${booking.id == null ? 'Book Room' : 'Edit Booking'}"></span>
+            </h2>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{${booking.id == null ? '/bookings/save' : '/bookings/' + booking.id + '/update'}}"
+                      th:object="${booking}" method="post">
+                    
+                    <!-- Room Selection -->
+                    <div class="mb-3">
+                        <label for="room" class="form-label">Room</label>
+                        <select class="form-select" id="room" th:field="*{room}" required
+                                th:disabled="${booking.id != null}">
+                            <option value="">Select a room</option>
+                            <option th:each="room : ${availableRooms}"
+                                    th:value="${room.id}"
+                                    th:text="${room.name + ' (Capacity: ' + room.capacity + ')'}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Event Selection (Optional) -->
+                    <div class="mb-3">
+                        <label for="event" class="form-label">Event (Optional)</label>
+                        <select class="form-select" id="event" th:field="*{event}">
+                            <option value="">Select an event</option>
+                            <option th:each="event : ${upcomingEvents}"
+                                    th:value="${event.id}"
+                                    th:text="${event.name + ' (' + #temporals.format(event.startDateTime, 'dd MMM yyyy') + ')'}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Booking Details -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="startTime" class="form-label">Start Time</label>
+                            <input type="datetime-local" class="form-control" id="startTime" 
+                                   th:field="*{startTime}" required
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="endTime" class="form-label">End Time</label>
+                            <input type="datetime-local" class="form-control" id="endTime" 
+                                   th:field="*{endTime}" required
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="purpose" class="form-label">Purpose</label>
+                        <input type="text" class="form-control" id="purpose" th:field="*{purpose}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="bookedBy" class="form-label">Booked By</label>
+                            <input type="text" class="form-control" id="bookedBy" th:field="*{bookedBy}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="contactInfo" class="form-label">Contact Info</label>
+                            <input type="text" class="form-control" id="contactInfo" th:field="*{contactInfo}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" th:if="${booking.id != null}">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" th:field="*{status}">
+                            <option th:each="status : ${T(com.pulse.model.BookingStatus).values()}"
+                                    th:value="${status}"
+                                    th:text="${status.displayName}">Status</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" th:field="*{notes}" rows="2"></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/rooms" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Save Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

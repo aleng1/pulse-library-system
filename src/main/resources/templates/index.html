@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Welcome to PULSE Library System</title>
+</head>
+<body>
+    <div layout:fragment="content" class="text-center">
+        <h1 class="display-4 mb-3">Welcome to PULSE Library System</h1>
+        <p class="text-muted mb-4">
+            <span class="text-primary">L</span>ibrary
+            <span class="text-primary">I</span>ntegrated
+            <span class="text-primary">R</span>esource &amp;
+            <span class="text-primary">I</span>nformation
+            <span class="text-primary">S</span>ystem
+        </p>
+        <p class="lead mb-5">Manage books, members, circulations, and events all in one platform.</p>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                        <div class="display-4 mb-3 text-primary">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h5 class="card-title">Book Management</h5>
+                        <p class="card-text flex-grow-1">Manage and monitor the library's book collection.</p>
+                        <a href="/books" class="btn btn-primary mt-auto">
+                            <i class="fas fa-arrow-right me-1"></i>
+                            View Books
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                        <div class="display-4 mb-3 text-success">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5 class="card-title">Member Management</h5>
+                        <p class="card-text flex-grow-1">Manage library members and their information.</p>
+                        <a href="/members" class="btn btn-primary mt-auto">
+                            <i class="fas fa-arrow-right me-1"></i>
+                            View Members
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                        <div class="display-4 mb-3 text-warning">
+                            <i class="fas fa-sync"></i>
+                        </div>
+                        <h5 class="card-title">Circulation Management</h5>
+                        <p class="card-text flex-grow-1">Handle book borrowing and returns.</p>
+                        <a href="/circulations" class="btn btn-primary mt-auto">
+                            <i class="fas fa-arrow-right me-1"></i>
+                            View Circulations
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                        <div class="display-4 mb-3 text-info">
+                            <i class="fas fa-door-open"></i>
+                        </div>
+                        <h5 class="card-title">Room Management</h5>
+                        <p class="card-text flex-grow-1">Manage library rooms and bookings.</p>
+                        <a href="/rooms" class="btn btn-primary mt-auto">
+                            <i class="fas fa-arrow-right me-1"></i>
+                            View Rooms
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                        <div class="display-4 mb-3 text-info">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h5 class="card-title">Event Management</h5>
+                        <p class="card-text flex-grow-1">Manage library activities and programs.</p>
+                        <a href="/events" class="btn btn-primary mt-auto">
+                            <i class="fas fa-arrow-right me-1"></i>
+                            View Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Library Statistics
+                        </h5>
+                        <div class="row text-center mt-4">
+                            <div class="col-6 mb-3">
+                                <h3 class="text-primary" th:text="${books != null ? #lists.size(books) : '0'}">0</h3>
+                                <p class="text-muted mb-0">Total Books</p>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <h3 class="text-success" th:text="${members != null ? #lists.size(members) : '0'}">0</h3>
+                                <p class="text-muted mb-0">Total Members</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-bell me-2"></i>
+                            Announcements
+                        </h5>
+                        <p class="card-text">
+                            Welcome to the new library system. The system is currently under development.
+                            Please contact the system administrator if you encounter any issues.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

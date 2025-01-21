@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Calendar</title>
+    <!-- FullCalendar Bundle (includes all plugins) -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.10/index.global.min.js'></script>
+    
+    <style>
+        #calendar {
+            margin-top: 20px;
+            min-height: 600px;
+        }
+        .fc-event {
+            cursor: pointer;
+        }
+        .fc .fc-button {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .fc .fc-button-primary:not(:disabled).fc-button-active,
+        .fc .fc-button-primary:not(:disabled):active {
+            background-color: #495057;
+            border-color: #495057;
+        }
+        .fc .fc-button:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .fc .fc-toolbar-title {
+            font-size: 1.5rem;
+        }
+        .fc .fc-view-harness {
+            background-color: white;
+        }
+        /* Additional styles for calendar */
+        .fc-header-toolbar {
+            margin-bottom: 1.5em !important;
+        }
+        .fc-day-today {
+            background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+        }
+        .fc-event {
+            padding: 3px;
+            border-radius: 3px;
+        }
+        .fc-event-title {
+            font-weight: 500;
+        }
+        .fc-timegrid-slot {
+            height: 3em !important;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-calendar-alt me-2"></i>Calendar</h2>
+            <div>
+                <a href="/rooms" class="btn btn-secondary me-2">
+                    <i class="fas fa-door-open me-1"></i>Manage Rooms
+                </a>
+                <a th:href="@{/bookings/new}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>New Booking
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="roomFilter" class="form-label">Filter by Room</label>
+                        <select class="form-select" id="roomFilter">
+                            <option value="">All Rooms</option>
+                            <option th:each="room : ${rooms}"
+                                    th:value="${room.id}"
+                                    th:text="${room.name}"
+                                    th:selected="${room.id == selectedRoomId}">Room</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="eventFilter" class="form-label">Filter by Event</label>
+                        <select class="form-select" id="eventFilter">
+                            <option value="">All Events</option>
+                            <option th:each="event : ${events}"
+                                    th:value="${event.id}"
+                                    th:text="${event.name}">Event</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript" layout:fragment="script">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the bookings data from Thymeleaf
+            var bookings = /*[[${bookings}]]*/ [];
+            console.log('Bookings:', bookings); // Debug log
+            
+            // Initialize calendar
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: [ 'dayGrid', 'timeGrid' ],
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                slotMinTime: '08:00:00',
+                slotMaxTime: '22:00:00',
+                events: bookings,
+                eventClick: function(info) {
+                    if (info.event.url) {
+                        window.location.href = info.event.url;
+                        return false;
+                    }
+                },
+                eventDidMount: function(info) {
+                    var props = info.event.extendedProps;
+                    var tooltip = info.event.title + '\n' +
+                        'Booked by: ' + props.bookedBy + '\n' +
+                        'Contact: ' + props.contactInfo + '\n' +
+                        'Status: ' + props.status;
+                    info.el.title = tooltip;
+                },
+                height: 'auto',
+                allDaySlot: false
+            });
+            
+            // Render the calendar
+            calendar.render();
+            console.log('Calendar rendered'); // Debug log
+
+            // Filter events
+            function filterEvents() {
+                var roomId = document.getElementById('roomFilter').value;
+                var eventId = document.getElementById('eventFilter').value;
+                
+                var filteredEvents = bookings;
+                
+                if (roomId || eventId) {
+                    filteredEvents = bookings.filter(function(event) {
+                        var matchesRoom = !roomId || event.roomId === parseInt(roomId);
+                        var matchesEvent = !eventId || event.eventId === parseInt(eventId);
+                        return matchesRoom && matchesEvent;
+                    });
+                }
+                
+                calendar.removeAllEvents();
+                calendar.addEventSource(filteredEvents);
+            }
+
+            // Add event listeners for filters
+            document.getElementById('roomFilter').addEventListener('change', filterEvents);
+            document.getElementById('eventFilter').addEventListener('change', filterEvents);
+        });
+    </script>
+</body>
+</html> 

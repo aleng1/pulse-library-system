@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Books</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Success Message -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${message}">
+            <i class="fas fa-check-circle me-1"></i>
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-book me-2"></i>Book Management</h2>
+            <a href="/books/new" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Add New Book
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <!-- Search Form -->
+                <form method="get" action="/books" class="row g-3 mb-4">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="query" name="query" 
+                                   placeholder="Search by title, author, or category..."
+                                   th:value="${query}">
+                            <button class="btn btn-outline-secondary" type="submit">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                            <a th:href="@{/books}" class="btn btn-outline-secondary" th:if="${query}">
+                                <i class="fas fa-times"></i> Clear
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ISBN</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Location</th>
+                                <th>Available Copies</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="book : ${books}">
+                                <td th:text="${book.isbn}"></td>
+                                <td th:text="${book.title}"></td>
+                                <td th:text="${book.author}"></td>
+                                <td th:text="${book.category.displayName}"></td>
+                                <td th:text="${book.location != null ? book.location.displayName : 'Not Set'}"></td>
+                                <td th:text="${book.availableCopies} + '/' + ${book.copies}"></td>
+                                <td>
+                                    <span th:class="${book.status == 'AVAILABLE' ? 'badge bg-success' : 'badge bg-warning'}"
+                                          th:text="${book.status}"></span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/books/{id}/edit(id=${book.id})}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a th:href="@{/books/{id}/delete(id=${book.id})}" class="btn btn-sm btn-danger"
+                                           onclick="return confirm('Are you sure you want to delete this book?')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(books)}">
+                                <td colspan="7" class="text-center">
+                                    <div th:if="${query}">
+                                        No books found matching your search criteria
+                                    </div>
+                                    <div th:unless="${query}">
+                                        No books found in the system
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

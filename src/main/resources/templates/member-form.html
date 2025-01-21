@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${member.id == null ? 'Add New Member' : 'Edit Member'}">Member Form</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-edit me-2"></i>
+                    <span th:text="${member.id == null ? 'Add New Member' : 'Edit Member'}">Member Form</span>
+                </h3>
+            </div>
+            <div class="card-body">
+                <form th:action="@{${member.id == null ? '/members/save' : '/members/' + member.id + '/update'}}"
+                      th:object="${member}" method="post" class="needs-validation" novalidate>
+                    
+                    <div class="mb-3">
+                        <label for="memberId" class="form-label">Member ID</label>
+                        <input type="text" class="form-control" id="memberId" th:field="*{memberId}" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('memberId')}" th:errors="*{memberId}">
+                            Please provide a member ID.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                            Please provide a name.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                            Please provide a valid email.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" th:field="*{address}" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="membershipType" class="form-label">Membership Type</label>
+                        <select class="form-select" id="membershipType" th:field="*{membershipType}" required>
+                            <option value="">Select Membership Type</option>
+                            <option value="STANDARD">Standard</option>
+                            <option value="PREMIUM">Premium</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/members" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Back to Members
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>
+                            <span th:text="${member.id == null ? 'Add Member' : 'Update Member'}">Submit</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
